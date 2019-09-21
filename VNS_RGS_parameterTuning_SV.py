@@ -513,8 +513,6 @@ def findRandomInsertionSV(currentRoute, currentRequests, currentRouteTime, total
                 tempProposedRouteRequests = proposedRouteRequests[:]
                 tempProposedRouteRequests.insert(j, requestToTest)
 
-                # print("ASDF ", tempProposedRoute)
-                # print("ASDF ", tempProposedRouteRequests)
                 [tempProposedRoute, tempProposedRouteRequests, tempRouteLoad, tempRouteTimeWasted, tempRouteTime,
                  tempFinalReward, tempFinalCost, tempPartiallyServedRequests, tempServedRequests, isItPossible] = \
                     updateRouteInfo(tempProposedRoute, tempProposedRouteRequests, currentRouteTime, tMatrix,
@@ -788,7 +786,7 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                                               tMatrix, allRequests, numOfRequests, x[routeNo])
 
                     if addedRequest != -1 and not any(xk == xRequestTemp2 for xk in tabuList):
-                        # print("Global Search Insert")
+
                         noOfMoves += 1
                         x[routeNo] = xTemp2[:]
                         xRequest[routeNo] = xRequestTemp2[:]
@@ -801,7 +799,7 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                                            sum(xCost), tMatrix, allRequests, numOfRequests)
 
                         if isItChanged and not any(xk == xRequestTemp for xk in tabuList):
-                            # print("Global Search Move")
+
                             noOfMoves += 1
                             x = copy.deepcopy(xTemp)
                             xRequest = copy.deepcopy(xRequestTemp)
@@ -814,7 +812,7 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                                                 allRequests, numOfRequests, routeNo)
 
                         if isItChanged and not any(xk == xRequestTemp for xk in tabuList):
-                            # print("Global Search Inter-Swap")
+
                             noOfMoves += 1
                             x = copy.deepcopy(xTemp)
                             xRequest = copy.deepcopy(xRequestTemp)
@@ -827,7 +825,7 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                                            tMatrix, allRequests, numOfRequests, routeNo)
 
                         if isItChanged and not any(xk == xRequestTemp for xk in tabuList):
-                            # print("Global Search Swap")
+
                             noOfMoves += 1
                             x = copy.deepcopy(xTemp)
                             xRequest = copy.deepcopy(xRequestTemp)
@@ -840,7 +838,7 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                                                 tMatrix, allRequests, numOfRequests, routeNo)
 
                         if isItChanged and not any(xk == xRequestTemp for xk in tabuList):
-                            # print("Global Search Intra-Swap")
+
                             noOfMoves += 1
                             x = copy.deepcopy(xTemp)
                             xRequest = copy.deepcopy(xRequestTemp)
@@ -864,7 +862,7 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                             updateAllRoutes(x, xRequest, currentRouteTime, tMatrix, allRequests)
 
                         if isItPossibleTemp and not any(xk == xRequestTemp for xk in tabuList):
-                            # print("Global Search Delete")
+
                             noOfMoves += 1
                             x = copy.deepcopy(xTemp)
                             xRequest = copy.deepcopy(xRequestTemp)
@@ -906,7 +904,6 @@ def VNS(currentRoute, currentRouteRequest, currentRouteTime, currentRouteLoad, c
                 bestProfit = sum(bestReward) - sum(bestCost)
                 TTFBS = time.clock() - startTimeVNS
             else:
-                # print("we did not find a better solution")
                 k += 1
 
             if time.clock() - startTimeVNS > maxCPUtime:
@@ -1594,11 +1591,11 @@ kmaxArray = [6, 8, 10]
 percentArray = [0.25, 0.5, 1]
 iterations = 20
 
-for j in range(2, len(kmaxArray)):
+for j in range(len(kmaxArray)):
     kmax = kmaxArray[j]
     print("kmax is:", kmax)
 
-    for PI in range(1, len(percentArray)):
+    for PI in range(len(percentArray)):
         percentNumber = percentArray[PI]
         print("percent Number is:", percentNumber)
 
@@ -1624,16 +1621,11 @@ for j in range(2, len(kmaxArray)):
                 partiallyServedRequestsAllVehicles.append(driverNo[ii])
                 driverEndNode.append(requests[driverNo[ii] - 1].deliveryNode)
 
-            print("route1:", route)
-            print("routerequest1:", routeRequest)
-
             [route, routeRequest, routeLoad, routeTimeWasted, routeTime, finalTime, finalLoad, finalCostEach, finalRewardEach,
                 partiallyServedRequests, servedRequests, servedRequestsAll, finalReward, finalCost, dataOfImages] = \
                 initialSolution(timeMatrix, requests, driverNo, route, routeRequest, routeLoad, routeTimeWasted, routeTime,
                     capacity, driverEndNode, partiallyServedRequests, partiallyServedRequestsAllVehicles, data_images)
 
-            print("route:", route)
-            print("routerequest:", routeRequest)
             [route, routeRequest, routeLoad, routeTimeWasted, routeTime, routeReward, routeCost, finalReward, finalCost,
              partiallyServedRequests, servedRequests, partiallyServedRequestsAllVehicles, servedRequestsAll,
              isPossible] = \
@@ -1645,15 +1637,10 @@ for j in range(2, len(kmaxArray)):
                             servedRequestsAll, timeMatrix,
                             requests, noOfRequests, dataOfImages)
 
-            print("routeLS:", route)
-            print("routerequestLS:", routeRequest)
-
             [route, routeRequest, routeLoad, routeTimeWasted, routeTime, routeReward, routeCost, finalReward, finalCost,
              partiallyServedRequests, servedRequests, partiallyServedRequestsAllVehicles, servedRequestsAll,
              isPossible] = \
                 updateAllRoutes(route, routeRequest, routeTime, timeMatrix, requests)
-
-            print("profitLS:", finalReward - finalCost)
 
             start_time_VNS = time.clock()
             [route, routeRequest, numGS, timeToFindBestSolution] = VNS(route, routeRequest, routeTime, routeLoad, servedRequests, routeReward,
@@ -1679,20 +1666,6 @@ for j in range(2, len(kmaxArray)):
             sheetPT.cell(row=j * len(percentArray) * iterations + PI * iterations + i + 2, column=11).value = timeToFindBestSolution
 
             bookResults.save('parameterTuningResults.xlsx')
-
-
-
-
-print("route is:                    ", route)
-print("route requests is:           ", routeRequest)
-print("route load is:               ", routeLoad)
-print("route waiting time is:       ", routeTimeWasted)
-print("route time is:               ", routeTime)
-print("final reward:                ", finalReward)
-print("final cost:                  ", finalCost)
-print("partially served requests:   ", partiallyServedRequestsAllVehicles)
-print("served Requests:             ", servedRequests)
-print("served Requests:             ", servedRequestsAll)
 
 print(datetime.datetime.now())
 end_time = time.clock()

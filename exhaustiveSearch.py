@@ -109,7 +109,6 @@ def checkTimeWindowsConstraints(consideredRequest, consideredNode, currentRoute,
         checked = True
     elif currTime <= l1:  # on time
         checked = True
-        # print("on time!")
     else:  # if time window not reached
         checked = False
 
@@ -117,7 +116,8 @@ def checkTimeWindowsConstraints(consideredRequest, consideredNode, currentRoute,
 
 
 def updateRouteInfo(currentRoute, currentRequest, currentRouteTime, tMatrix, allRequests):
-
+    # USED TO UPDATE THE INFORMATION ON A SINGLE ROUTE
+    # ------------------------------------------------ INITIALIZATION ------------------------------------------------
     tempRoute = []
     tempRouteRequest = []
     tempRouteLoad = []
@@ -134,41 +134,46 @@ def updateRouteInfo(currentRoute, currentRequest, currentRouteTime, tMatrix, all
     tempRouteTimeWasted.append(0)
     tempRouteTime.append(currentRouteTime[0])
     tempPartiallyServedRequests.append(currentRequest[0])
+    # ----------------------------------------------------------------------------------------------------------------
 
-    for i in range(1, len(currentRoute)):  # testing all the nodes
+    for i in range(1, len(currentRoute)):  # testing all the nodes inside the route
         # CAPACITY
-        if allRequests[currentRequest[i] - 1].pickupNode == currentRoute[i]:
-            tempRouteLoad.append(tempRouteLoad[-1] + allRequests[currentRequest[i] - 1].load)
+        if allRequests[currentRequest[i] - 1].pickupNode == currentRoute[i]:  # if it is a pickup node
+            tempRouteLoad.append(tempRouteLoad[-1] + allRequests[currentRequest[i] - 1].load)  # increase the load
             tempPartiallyServedRequests.append(currentRequest[i])
-            if tempRouteLoad[-1] > 4:
-                # print("capacity constraints violated: ", tempRouteLoad[i])
+            if tempRouteLoad[-1] > capacity:  # if capacity constraints have been violated
+                # exit the function with isItPossible = False
                 return currentRoute, currentRequest, tempRouteLoad, tempRouteTimeWasted, tempRouteTime,\
                        tempFinalReward, tempFinalCost, tempPartiallyServedRequests, tempServedRequests, False
-        elif allRequests[currentRequest[i] - 1].deliveryNode == currentRoute[i]:
-            # print("adding ", allRequests[currentRequest[i] - 1].reward, "to", tempFinalReward)
 
+        # capacity constraints cannot be violated if we are at a delivery node
+        elif allRequests[currentRequest[i] - 1].deliveryNode == currentRoute[i]:
             tempServedRequests.append(currentRequest[i])
             tempPartiallyServedRequests.remove(currentRequest[i])
+
+            # if request considered is the driver's request, then no reward is given
             if currentRequest[i] == currentRequest[0]:
                 tempRouteLoad.append(0)
-            else:
+            else:  # update the load and reward
                 tempRouteLoad.append(tempRouteLoad[-1] - allRequests[currentRequest[i] - 1].load)
                 tempFinalReward += allRequests[currentRequest[i] - 1].reward  # update the reward
 
         # TIME WINDOWS
-        tempRouteTimeWasted.append(9999)
-        [timeWindowsCheck, tempRouteTimeWasted[i], timeToTravel] =\
-                                checkTimeWindowsConstraints(currentRequest[i],currentRoute[i], tempRoute, tMatrix,
-                                                            allRequests, tempRouteTime[-1])
+        [timeWindowsCheck, temporaryTimeWasted, timeToTravel] =\
+                                    checkTimeWindowsConstraints(currentRequest[i], currentRoute[i], tempRoute, tMatrix,
+                                                                allRequests, tempRouteTime[-1])
+        tempRouteTimeWasted.append(temporaryTimeWasted)  # update time wasted list
 
-        if timeWindowsCheck:
-            tempRouteTime.append(tempRouteTime[-1] + tempRouteTimeWasted[i] + timeToTravel)
-        else:
+        if timeWindowsCheck:  # if time windows constraints are not violated
+            tempRouteTime.append(tempRouteTime[-1] + tempRouteTimeWasted[i] + timeToTravel)  # update time list
+        else:  # time windows constraints have been violated
+            # exit the function with isItPossible = False
             return currentRoute, currentRequest, tempRouteLoad, tempRouteTimeWasted, tempRouteTime, tempFinalReward,\
                    tempFinalCost, tempPartiallyServedRequests, tempServedRequests, False
 
-        # print("final cost:", tempFinalCost, timeToTravel * 0.0016)
-        tempFinalCost += 0.0016 * timeToTravel  # we are not considering wasted time as a cost
+        # we are not considering wasted time as a cost
+        # cost is calculated to be 10c per minute
+        tempFinalCost += 0.0016 * timeToTravel
         tempRoute.append(currentRoute[i])
         tempRouteRequest.append(currentRequest[i])
 
@@ -333,13 +338,13 @@ for i in range(noOfRequests):
                     bestRouteRequest = routeRequest[:]
                     bestReward = finalReward
                     bestCost = finalCost
-                    print("best profit:", finalReward - finalCost)
+                    print("best profit so far:", finalReward - finalCost)
                     timeToFindBestProfit = time.clock() - start_time
 
 print(" ")
-print(bestRoute)
-print(bestRouteRequest)
-print(bestReward - bestCost)
+print("best route:        ", bestRoute)
+print("best route request:", bestRouteRequest)
+print("best Profit:       ", bestReward - bestCost)
 print(" ")
 print(datetime.datetime.now())
 end_time = time.clock()
