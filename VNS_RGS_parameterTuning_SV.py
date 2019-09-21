@@ -1535,6 +1535,8 @@ timeToFindBestSolution = 0
 kmax = 0
 percentNumber = 0
 
+xProfitPlot = []
+
 # numsGeo is a reference to the realCoordinates
 numsGeo = realCoordinates[:, ::-1]  # reverse the order of the geographical coordinates (from y,x format to x,y format)
 # plot the image of Malta to be considered
@@ -1652,6 +1654,9 @@ for j in range(len(kmaxArray)):
              partiallyServedRequests, servedRequests, partiallyServedRequestsAllVehicles, servedRequestsAll,
              isPossible] = \
                 updateAllRoutes(route, routeRequest, routeTime, timeMatrix, requests)
+
+            dataOfImages = newSolutionPlot(route, routeRequest, routeTime, routeLoad, finalReward, finalCost,
+                                           dataOfImages)
 
             sheetPT.cell(row=j * len(percentArray) * iterations + PI * iterations + i + 2, column=1).value = kmax
             sheetPT.cell(row=j * len(percentArray) * iterations + PI * iterations + i + 2, column=2).value = percentNumber

@@ -1533,6 +1533,8 @@ capacity = 4
 maxCPUtime = 120  # 120 seconds
 timeToFindBestSolution = 0
 
+xProfitPlot = []
+
 # numsGeo is a reference to the realCoordinates
 numsGeo = realCoordinates[:, ::-1]  # reverse the order of the geographical coordinates (from y,x format to x,y format)
 # plot the image of Malta to be considered
@@ -1650,6 +1652,8 @@ for j in range(10):
          partiallyServedRequests, servedRequests, partiallyServedRequestsAllVehicles, servedRequestsAll,
          isPossible] = \
             updateAllRoutes(route, routeRequest, routeTime, timeMatrix, requests)
+
+        dataOfImages = newSolutionPlot(route, routeRequest, routeTime, routeLoad, finalReward, finalCost, dataOfImages)
 
         sheetPT.cell(row=10*j + i + 2, column=1).value = i
         sheetPT.cell(row=10*j + i + 2, column=2).value = str(route)

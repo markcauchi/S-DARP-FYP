@@ -1726,6 +1726,8 @@ for i in range(iterations):
      isPossible] = \
         updateAllRoutes(route, routeRequest, routeTime, timeMatrix, requests)
 
+    dataOfImages = newSolutionPlot(route, routeRequest, routeTime, routeLoad, finalReward, finalCost, dataOfImages)
+
     resultsSheet.cell(row=i + 2, column=1).value = i + 1
     resultsSheet.cell(row=i + 2, column=2).value = str(route)
     resultsSheet.cell(row=i + 2, column=3).value = str(routeRequest)

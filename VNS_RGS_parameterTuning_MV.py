@@ -1521,6 +1521,8 @@ noOfRequests = 100  # 100 requests
 requests = []
 data_images = []
 
+xProfitPlot = []
+
 # startOfNI = []
 # startOfGS = []
 # startOfLS = []
@@ -1653,6 +1655,9 @@ for j in range(len(kmaxArray)):
              partiallyServedRequests, servedRequests, partiallyServedRequestsAllVehicles, servedRequestsAll,
              isPossible] = \
                 updateAllRoutes(route, routeRequest, routeTime, timeMatrix, requests)
+
+            dataOfImages = newSolutionPlot(route, routeRequest, routeTime, routeLoad, finalReward, finalCost,
+                                           dataOfImages)
 
             sheetPT.cell(row=j * len(percentArray) * iterations + PI * iterations + i + 2, column=1).value =\
                                                                                         kmax
